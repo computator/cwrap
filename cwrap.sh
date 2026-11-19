@@ -31,6 +31,7 @@ fi
 : "${PROJECT_ROOT:=$PWD}"
 
 mkdir -p "${CWRAP_CODEX_ROOT}"
+mkdir -p "${CWRAP_CODEX_ROOT}/daemon-socket-shared"
 
 [ $dbg ] && cat <<-EOF >&2
 	dbg: Detected values:
@@ -53,6 +54,8 @@ exec $bwrap \
 	--setenv CODEX_HOME /codex \
 	--setenv PATH /usr/bin:/codex \
 	--bind "${CWRAP_CODEX_ROOT}" /codex \
+	--bind "${CWRAP_CODEX_ROOT}/daemon-socket-shared" "/tmp/codex-daemon-$(id -u)" \
+	--chmod 0700 /codex/daemon-socket-shared \
 	--bind "${PROJECT_ROOT}" "${PROJECT_ROOT}" \
 	--ro-bind-try "${PROJECT_ROOT}/${git_root:-.git}" "${PROJECT_ROOT}/${git_root:-.git}" \
 	--ro-bind /usr/bin /usr/bin \
@@ -66,5 +69,4 @@ exec $bwrap \
 	--ro-bind /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt \
 	--dev /dev \
 	--proc /proc \
-	--dir /tmp \
 	"$cmd" "$@"
