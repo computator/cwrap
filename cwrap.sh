@@ -17,8 +17,18 @@ fi
 
 cmd=
 case "${1-}" in
-	sh|bash|zsh|codex) cmd="$1"; shift ;;
-	*) cmd="codex" ;;
+	sh|bash|zsh|codex)
+		cmd="$1"
+		shift
+		;;
+	install)
+		cmd="sh"
+		shift
+		set -- -c 'curl -fsSL https://chatgpt.com/codex/install.sh | sh -s -- "$@"' -- "$@"
+		;;
+	*)
+		cmd="codex"
+		;;
 esac
 
 : \
